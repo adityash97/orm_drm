@@ -1,0 +1,10 @@
+<form method="POST">
+    {% csrf_token %}
+    {{ formset.management_form }}  <!-- Required! -->
+
+    {% for form in formset %}
+        {{ form.as_p }}
+    {% endfor %}
+
+    <input type="submit" value="Submit">
+</form>

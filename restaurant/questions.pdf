@@ -1,0 +1,80 @@
+ Basic DRF Serializer Practice
+	1.	Create serializers for Restaurant, Rating, and Sale models. --DONE
+	2.	Implement validation so restaurant name must start with “A”. -- DONE
+	3.	Add a custom SerializerMethodField to return a restaurant’s open year from date_opened. --DONE
+
+	4.	Format the open_time field in 12-hour format using the serializer. --DONE
+
+	5.	Make a read-only serializer that excludes latitude and longitude.
+
+	6.	Add a field in the Rating serializer that gives the name of the restaurant. --DONE
+
+⸻
+
+🔹 CRUD APIs
+	7.	Create List, Retrieve, Create, Update, and Delete API endpoints for each model. --DONE
+
+
+	8.	Create a nested endpoint /restaurant/{id}/ratings/ that shows all ratings of that restaurant. And same for Sale.
+
+	9.	Implement a filter on /restaurants/?type=IN to show only Indian restaurants.
+
+⸻
+
+🔹 Nested Serializers and Reverse Relationships
+	10.	In RestaurantSerializer, include all ratings using a nested RatingSerializer.
+	11.	In RatingSerializer, include restaurant name using source='restaurant.name'.
+	12.	Show average_rating of each restaurant using annotated value in the serializer.
+
+⸻
+
+🔹 Advanced Serializer Logic
+	13.	Override to_representation to hide sensitive fields if user is not authenticated.
+	14.	Use to_internal_value() to accept custom formatted inputs for time/date fields.
+	15.	Add HyperlinkedIdentityField in serializer to show update/delete links.
+
+⸻
+
+🔹 Views and ViewSets
+	16.	Use ModelViewSet to handle CRUD operations for Restaurant.
+	17.	Override create() method in RatingViewSet to add validation on rating range.
+	18.	Create a APIView to return a report of top 5 restaurants by average rating.
+	19.	Use GenericAPIView + mixins for Sale API endpoints.
+
+⸻
+
+🔹 Django ORM + DRF Practice
+	20.	List all restaurants with their number of ratings.
+	21.	Show all restaurants with average_rating > 3.
+	22.	Get the count of 5-star ratings for each restaurant.
+	23.	Return the restaurant with the highest total income from Sale.
+
+⸻
+
+🔹 Subqueries and OuterRef Practice
+	24.	Annotate each restaurant with its average rating using OuterRef and Subquery.
+	25.	Show only restaurants that have sales where income > expense using subquery filter.
+	26.	Get the most recent rating for each restaurant and show it in API.
+
+⸻
+
+🔹 Aggregation and Grouping
+	27.	Show rating distribution per restaurant (e.g., 5⭐: 3, 4⭐: 2, …).
+	28.	Create a sales report per restaurant showing total income and number of sales.
+	29.	Display restaurant-wise total number of ratings, average rating, and good rating percentage (rating > 3).
+
+⸻
+
+🔹 Pagination, Filters, Permissions
+	30.	Apply pagination to the Restaurant list view.
+	31.	Create a permission so only authenticated users can create ratings.
+	32.	Add filter to return restaurants opened after a given date.
+
+⸻
+
+🔹 Bonus / Real-world Style APIs
+	33.	Implement a POST endpoint /restaurants/{id}/rate/ where user can submit a rating.
+	34.	Implement a GET endpoint /restaurants/top/?limit=3 that returns top 3 restaurants by average rating.
+	35.	Make a PUT API that updates restaurant location (lat/lng) with validation.
+	36.	Return data grouped by restaurant_type in a GET endpoint.
+	37.	Show restaurant rating trend month-wise using annotated queryset in the serializer.
