@@ -15,31 +15,36 @@
 	7.	Create List, Retrieve, Create, Update, and Delete API endpoints for each model. --DONE
 
 
-	8.	Create a nested endpoint /restaurant/{id}/ratings/ that shows all ratings of that restaurant. And same for Sale.
+	8.	Create a nested endpoint /restaurant/{id}/ratings/ that shows all ratings of that restaurant. And same for Sale. --DONE
 
-	9.	Implement a filter on /restaurants/?type=IN to show only Indian restaurants.
+	9.	Implement a filter on /restaurants/?type=IN to show only Indian restaurants. --DONE
 
 ⸻
 
 🔹 Nested Serializers and Reverse Relationships
-	10.	In RestaurantSerializer, include all ratings using a nested RatingSerializer.
-	11.	In RatingSerializer, include restaurant name using source='restaurant.name'.
-	12.	Show average_rating of each restaurant using annotated value in the serializer.
+	10.	In RestaurantSerializer, include all ratings using a nested RatingSerializer.---DONE
+
+	11.	In RatingSerializer, include restaurant name using source='restaurant.name'. --DONE
+
+	12.	Show average_rating of each restaurant using annotated value in the serializer. --DONE
 
 ⸻
 
 🔹 Advanced Serializer Logic
-	13.	Override to_representation to hide sensitive fields if user is not authenticated.
+	13.	Override to_representation to hide sensitive fields if user is not authenticated. --Pending(implement logging fuctionality)
 	14.	Use to_internal_value() to accept custom formatted inputs for time/date fields.
-	15.	Add HyperlinkedIdentityField in serializer to show update/delete links.
+
+	15.	Add HyperlinkedIdentityField in serializer to show update/delete links. --DONE
 
 ⸻
 
 🔹 Views and ViewSets
 	16.	Use ModelViewSet to handle CRUD operations for Restaurant.
 	17.	Override create() method in RatingViewSet to add validation on rating range.
+	
 	18.	Create a APIView to return a report of top 5 restaurants by average rating.
-	19.	Use GenericAPIView + mixins for Sale API endpoints.
+
+	19.	Use GenericAPIView + mixins for Sale API endpoints. --DONE
 
 ⸻
 

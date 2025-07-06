@@ -6,21 +6,26 @@ from rest_framework.mixins import ListModelMixin,CreateModelMixin,DestroyModelMi
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework import status
-# Create your views here.
 from .serializers import RestaurantSerializer,RatingSerializer,SaleSerializer
 from .models import Restaurant,Rating,Sale
+from django.db.models import Avg
 
-
+# Restaurant View
 class RestaurantAPIView(APIView,PageNumberPagination):
     queryset = Restaurant.objects.all()
 
     def get(self,request,pk=None,*args,**kwargs):
         if pk:
-            serializer = RestaurantSerializer(get_object_or_404(Restaurant,pk=pk))
+            serializer = RestaurantSerializer(get_object_or_404(Restaurant,pk=pk),context={'request': request})
             return Response(serializer.data, status=status.HTTP_200_OK)
+        type_filter = request.GET.getlist('type',[])
+        if type_filter:
+            self.queryset = self.queryset.filter(restaurant_type__in = type_filter)
+        self.queryset = self.queryset.annotate(avg_rating = Avg('ratings__rating'))
+            
         self.page_size = 5 
         paginated_ratings = self.paginate_queryset(self.queryset, request)
-        serializer = RestaurantSerializer(paginated_ratings, many=True)
+        serializer = RestaurantSerializer(paginated_ratings, many=True,context={'request': request})
         return self.get_paginated_response(serializer.data)
     def post(self,request,*args,**kwargs):
         serializer = RestaurantSerializer(data = request.data)
@@ -40,9 +45,26 @@ class RestaurantAPIView(APIView,PageNumberPagination):
         restaurant.delete()
         return Response({"message":f"Restaurant of id : {pk} deleted."},status=status.HTTP_200_OK)
         
+class RestaurantRatingAPIView(APIView,PageNumberPagination):
+    def get(self,request,pk=None,*args,**kwargs):
+        self.page_size = 10
+        restaurant = get_object_or_404(Restaurant,pk=pk)
+        rating_queryset = self.paginate_queryset(restaurant.ratings.all(),request=request)
         
-    
-
+        serializer = RatingSerializer(rating_queryset,many=True)
+        
+        return self.get_paginated_response(serializer.data)
+        
+             
+class RestaurantSalesAPIView(APIView,PageNumberPagination):
+    def get(self,request,pk=None, *args,**kwargs):
+        self.page_size = 5
+        restaurant = get_object_or_404(Restaurant,pk=pk)
+        sales_queryset = self.paginate_queryset(restaurant.sales.all(),request)
+        serializer = SaleSerializer(sales_queryset,many=True)
+        return self.get_paginated_response(serializer.data)
+        
+# Rating View
 class RatingGenericAPIView(GenericAPIView,ListModelMixin,RetrieveModelMixin,UpdateModelMixin,DestroyModelMixin):
     queryset = Rating.objects.all()
     serializer_class = RatingSerializer
@@ -62,7 +84,7 @@ class RatingGenericAPIView(GenericAPIView,ListModelMixin,RetrieveModelMixin,Upda
     def delete(self,request,pk=None,*args,**kwargs):
         return self.destroy(request,*args,**kwargs)
 
-
+# Sales View
 class SalesGenericAPIView(GenericAPIView,ListModelMixin,RetrieveModelMixin,UpdateModelMixin,DestroyModelMixin):
     queryset = Sale.objects.all()
     serializer_class = SaleSerializer
