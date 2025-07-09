@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet
 from rest_framework.generics import GenericAPIView
 from rest_framework.mixins import ListModelMixin,CreateModelMixin,DestroyModelMixin,UpdateModelMixin,RetrieveModelMixin
 from rest_framework.pagination import PageNumberPagination
@@ -63,7 +64,18 @@ class RestaurantSalesAPIView(APIView,PageNumberPagination):
         sales_queryset = self.paginate_queryset(restaurant.sales.all(),request)
         serializer = SaleSerializer(sales_queryset,many=True)
         return self.get_paginated_response(serializer.data)
+
+
+"""Restaurant View Set"""        
+class RestaurantModelViewSet(ModelViewSet):
+    serializer_class = RestaurantSerializer
+    queryset = Restaurant.objects.all()
+    
         
+    
+    
+
+
 # Rating View
 class RatingGenericAPIView(GenericAPIView,ListModelMixin,RetrieveModelMixin,UpdateModelMixin,DestroyModelMixin):
     queryset = Rating.objects.all()
@@ -84,6 +96,10 @@ class RatingGenericAPIView(GenericAPIView,ListModelMixin,RetrieveModelMixin,Upda
     def delete(self,request,pk=None,*args,**kwargs):
         return self.destroy(request,*args,**kwargs)
 
+
+class RatingViewset(ModelViewSet):
+    queryset = Rating.objects.all()
+    serializer_class = RatingSerializer
 # Sales View
 class SalesGenericAPIView(GenericAPIView,ListModelMixin,RetrieveModelMixin,UpdateModelMixin,DestroyModelMixin):
     queryset = Sale.objects.all()
