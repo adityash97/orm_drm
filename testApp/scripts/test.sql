@@ -58,4 +58,13 @@ group by restaurant_id
 
 
 
+select  restaurant_restaurant.name,  Avg(restaurant_rating.rating) as avg_rating from 
+restaurant_restaurant join restaurant_rating on  restaurant_restaurant.id = restaurant_rating.restaurant_id
+group by restaurant_restaurant.name having restaurant_restaurant.id = 31
+
+select rating from restaurant_rating where id= 32
+
+
+
+select * from restaurant_restaurant
 -- select  testApp_books.author_id,count(id) as Books_Count  from testApp_books group by testApp_books.author_id 

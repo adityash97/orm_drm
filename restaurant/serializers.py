@@ -1,6 +1,7 @@
 from .models import Restaurant, Rating, Sale
 from rest_framework import serializers
 from django.utils import dateparse
+from rest_framework.reverse import reverse
 # validators
 
 
@@ -24,6 +25,11 @@ class RatingSerializer(serializers.ModelSerializer):
     restaurant_char_field = serializers.CharField(source='restaurant.name',read_only=True)
     def get_restaurant_name(self,object):
         return object.restaurant.name
+    
+    # def validate_rating(self,obj):
+    #     if obj >= 1 and obj <=5:
+    #         return obj
+    #     raise serializers.ValidationError("Rating must be greater than 1 and less than 5")
     
     
     def create(self, validated_data):
@@ -50,15 +56,23 @@ class RestaurantSerializer(serializers.ModelSerializer):
     open_year = serializers.SerializerMethodField()
     average_rating = serializers.DecimalField(source='avg_rating',read_only=True,max_digits=3,decimal_places=1)
     ratings  = RatingSerializer(read_only=True,many=True)
-    to_update = serializers.HyperlinkedIdentityField(view_name='restaurant_update_api_view',  lookup_field='pk' )
+    # to_update = serializers.HyperlinkedIdentityField(view_name='restaurant_update_api_view',  lookup_field='id' )
+    to_update_url = serializers.SerializerMethodField()
+    
+    
     
     
     # method fields
+    
+    def get_to_update_url(self,object):
+        request = self.context.get('request')
+        return reverse(viewname='restaurant_update_api_view',request=request,kwargs={'pk':object.get('id')})
+        
     def get_open_year(self,object):
-        open_date = dateparse.parse_date(str(object.date_opened))
+        open_date = object.get('date_opened',None)
         if open_date:
-            return open_date.year
-        return None
+            return dateparse.parse_date(str(open_date)).year
+        return open_date
         
     # field validations
     def validate_name(self,data):

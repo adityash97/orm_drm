@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import RestaurantAPIView, RatingGenericAPIView,SalesGenericAPIView,RestaurantRatingAPIView,RestaurantSalesAPIView
+from .views import RestaurantAPIView, RatingGenericAPIView,SalesGenericAPIView,RestaurantRatingAPIView,RestaurantSalesAPIView,TopFiveRestaurantByRating
 from .views import RestaurantModelViewSet,RatingViewset
 from rest_framework.routers import DefaultRouter
 router = DefaultRouter()
@@ -12,6 +12,7 @@ urlpatterns = [
     path('<int:pk>/',RestaurantAPIView.as_view(), name='restaurant_update_api_view'),
     path('<int:pk>/ratings/',RestaurantRatingAPIView.as_view(),name='restaurant_ratings'),
     path('<int:pk>/sales/',RestaurantSalesAPIView.as_view(),name='restaurant_sales'),
+    path('top-five/',TopFiveRestaurantByRating.as_view(),name='restaurant_top_five_vy_rating'),
     
     path('rating/',RatingGenericAPIView.as_view(), name='rating_generic_api_view'),
     

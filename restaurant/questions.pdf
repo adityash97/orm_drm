@@ -39,10 +39,10 @@
 ⸻
 
 🔹 Views and ViewSets
-	16.	Use ModelViewSet to handle CRUD operations for Restaurant.
-	17.	Override create() method in RatingViewSet to add validation on rating range.
+	16.	Use ModelViewSet to handle CRUD operations for Restaurant. --done 9 july
+	17.	Override create() method in RatingViewSet to add validation on rating range.--Done 10july
 	
-	18.	Create a APIView to return a report of top 5 restaurants by average rating.
+	18.	Create a APIView to return a report of top 5 restaurants by average rating. --Done 10 july
 
 	19.	Use GenericAPIView + mixins for Sale API endpoints. --DONE
 

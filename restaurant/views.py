@@ -55,7 +55,12 @@ class RestaurantRatingAPIView(APIView,PageNumberPagination):
         serializer = RatingSerializer(rating_queryset,many=True)
         
         return self.get_paginated_response(serializer.data)
-        
+
+class TopFiveRestaurantByRating(APIView):
+    def get(self,request,*args,**kwrgs):
+        queryset = Restaurant.objects.all().values('id','name').annotate(avg_rating = Avg('ratings__rating')).values().order_by('-avg_rating')[:5]
+        serializer = RestaurantSerializer(queryset,many=True,context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
              
 class RestaurantSalesAPIView(APIView,PageNumberPagination):
     def get(self,request,pk=None, *args,**kwargs):
@@ -100,6 +105,15 @@ class RatingGenericAPIView(GenericAPIView,ListModelMixin,RetrieveModelMixin,Upda
 class RatingViewset(ModelViewSet):
     queryset = Rating.objects.all()
     serializer_class = RatingSerializer
+    
+    def create(self,request,*args,**kwrgs):
+        try:
+            rating = int(request.data.get('rating'))
+        except:
+            return Response({'msg':'Please enter valid rating'},status=status.HTTP_400_BAD_REQUEST)
+        if rating and rating >=1 and rating <= 5:
+            return super().create(request,*args,**kwrgs)
+        return Response({'msg': 'Rating must be greater than 1 and less than 5'},status=status.HTTP_400_BAD_REQUEST)
 # Sales View
 class SalesGenericAPIView(GenericAPIView,ListModelMixin,RetrieveModelMixin,UpdateModelMixin,DestroyModelMixin):
     queryset = Sale.objects.all()
