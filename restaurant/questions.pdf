@@ -49,15 +49,15 @@
 ⸻
 
 🔹 Django ORM + DRF Practice
-	20.	List all restaurants with their number of ratings.
+	20.	List all restaurants with their number of ratings. --done 10 july
 	21.	Show all restaurants with average_rating > 3.
 	22.	Get the count of 5-star ratings for each restaurant.
-	23.	Return the restaurant with the highest total income from Sale.
+	23.	Return the restaurant with the highest total income from Sale. -- Done 
 
 ⸻
 
 🔹 Subqueries and OuterRef Practice
-	24.	Annotate each restaurant with its average rating using OuterRef and Subquery.
+	24.	Annotate each restaurant with its average rating using OuterRef and Subquery. --done
 	25.	Show only restaurants that have sales where income > expense using subquery filter.
 	26.	Get the most recent rating for each restaurant and show it in API.
 

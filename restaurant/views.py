@@ -9,8 +9,11 @@ from rest_framework.response import Response
 from rest_framework import status
 from .serializers import RestaurantSerializer,RatingSerializer,SaleSerializer
 from .models import Restaurant,Rating,Sale
-from django.db.models import Avg
+from django.db.models import Avg,Count,Sum,Subquery,F,OuterRef
 
+#query 
+avg_rating = Rating.objects.filter(pk = OuterRef('pk')).annotate(avg_rating=Avg('rating')
+).values('avg_rating')
 # Restaurant View
 class RestaurantAPIView(APIView,PageNumberPagination):
     queryset = Restaurant.objects.all()
@@ -20,9 +23,19 @@ class RestaurantAPIView(APIView,PageNumberPagination):
             serializer = RestaurantSerializer(get_object_or_404(Restaurant,pk=pk),context={'request': request})
             return Response(serializer.data, status=status.HTTP_200_OK)
         type_filter = request.GET.getlist('type',[])
+        profit = request.GET.getlist('profit',[])
         if type_filter:
             self.queryset = self.queryset.filter(restaurant_type__in = type_filter)
-        self.queryset = self.queryset.annotate(avg_rating = Avg('ratings__rating'))
+        if profit:
+            self.queryset = self.queryset
+            
+        """
+        self.queryset = self.queryset.annotate(avg_rating = Avg('ratings__rating')) # use sub query for this feature
+        
+        """
+        self.queryset = self.queryset.annotate(avg_rating = Subquery(avg_rating))
+        
+        self.queryset = self.queryset.annotate(count_rating = Count('ratings__rating'))
             
         self.page_size = 5 
         paginated_ratings = self.paginate_queryset(self.queryset, request)
@@ -61,6 +74,17 @@ class TopFiveRestaurantByRating(APIView):
         queryset = Restaurant.objects.all().values('id','name').annotate(avg_rating = Avg('ratings__rating')).values().order_by('-avg_rating')[:5]
         serializer = RestaurantSerializer(queryset,many=True,context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
+class HighestTotalIncomeRestaurant(APIView,PageNumberPagination):
+    def get(self,request,*args,**kwargs):
+        queryset = Restaurant.objects.values('id','name').annotate(total_sales =Sum('sales__income') ).order_by('-total_sales')
+        queryset = queryset.annotate(avg_rating = Avg('ratings__rating'),count_rating = Count('ratings__rating')).values()
+        # paginated_queryset = self.paginate_queryset(queryset=queryset,request=request)
+       
+        
+        self.page = 2
+        
+        serializer = RestaurantSerializer(queryset,many=True,context={'request':request})
+        return Response(serializer.data)
              
 class RestaurantSalesAPIView(APIView,PageNumberPagination):
     def get(self,request,pk=None, *args,**kwargs):

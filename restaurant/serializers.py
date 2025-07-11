@@ -2,6 +2,7 @@ from .models import Restaurant, Rating, Sale
 from rest_framework import serializers
 from django.utils import dateparse
 from rest_framework.reverse import reverse
+from django.db import models
 # validators
 
 
@@ -53,23 +54,40 @@ class RatingSerializer(serializers.ModelSerializer):
 # Normal Serializers
 class RestaurantSerializer(serializers.ModelSerializer):
     
-    open_year = serializers.SerializerMethodField()
+    open_year = serializers.SerializerMethodField(read_only=True)
     average_rating = serializers.DecimalField(source='avg_rating',read_only=True,max_digits=3,decimal_places=1)
     ratings  = RatingSerializer(read_only=True,many=True)
     # to_update = serializers.HyperlinkedIdentityField(view_name='restaurant_update_api_view',  lookup_field='id' )
-    to_update_url = serializers.SerializerMethodField()
+    to_update_url = serializers.SerializerMethodField(read_only=True)
+    rating_count = serializers.CharField(source='count_rating')
+    total_sales = serializers.SerializerMethodField(read_only=True)
     
     
     
     
     # method fields
-    
+    def get_total_sales(self,object):
+        try:
+            return object.get('total_sales')
+        except:
+            return None
+        
     def get_to_update_url(self,object):
+        # sometimes getting object from other views instead of model instance. like from : TopFiveRestaurantByRating 
+        try:
+            id = object.id
+        except:
+            id = object.get('id')
         request = self.context.get('request')
-        return reverse(viewname='restaurant_update_api_view',request=request,kwargs={'pk':object.get('id')})
+        return reverse(
+            viewname='restaurant_update_api_view',request=request,kwargs={'pk':id}
+                       )
         
     def get_open_year(self,object):
-        open_date = object.get('date_opened',None)
+        try:
+            open_date = object.date_opened
+        except:
+            open_date = object.get('date_opened',None)
         if open_date:
             return dateparse.parse_date(str(open_date)).year
         return open_date
