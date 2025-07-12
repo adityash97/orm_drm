@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     "rest_framework",
     "testApp",
     "drf",
-    "restaurant"
+    "restaurant",
+    "user"
 ]
 
 
