@@ -225,13 +225,13 @@ class RestaurantModelViewSet(ModelViewSet):
 Clone the repository:
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/adityash97/orm_drm
 ```
 
 Move into the project directory:
 
 ```bash
-cd <project-folder>
+cd orm_drf
 ```
 
 Create virtual environment:
